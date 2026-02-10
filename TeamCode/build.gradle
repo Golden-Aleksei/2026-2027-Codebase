@@ -14,6 +14,9 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'kotlin-android' // Added Kotlin - Julian
+
+
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -21,8 +24,23 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
+
+    // Added for Kotlin + Gradle compatibility
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+    // NextFTC
+    implementation("dev.nextftc:ftc:1.0.1")
+    implementation("dev.nextftc:hardware:1.0.1")
+    implementation 'dev.nextftc.extensions:pedro:1.0.0'
 }
