@@ -41,14 +41,6 @@ public class Constants {
             1,
             1);
 
-    public static Follower createFollower(HardwareMap hardwareMap) {
-        return new FollowerBuilder(followerConstants, hardwareMap)
-                .pinpointLocalizer(localizerConstants)
-                .pathConstraints(pathConstraints)
-                .mecanumDrivetrain(driveConstants)
-                .build();
-    }
-
     public static MecanumConstants driveConstants = new MecanumConstants()
             .xVelocity(60.71848182978592) // TODO: Run ForwardVelocityTuner and check
             .yVelocity(53.26731956662155) // TODO: Run LateralVelocityTuner and check
@@ -70,4 +62,16 @@ public class Constants {
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD) // TODO: Check encoder directions, run localization test in tuning
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        try {
+            return new FollowerBuilder(followerConstants, hardwareMap)
+                    .pinpointLocalizer(localizerConstants)
+                    .pathConstraints(pathConstraints)
+                    .mecanumDrivetrain(driveConstants)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("createFollower FAILED: " + e.getMessage(), e);
+        }
+    }
 }
