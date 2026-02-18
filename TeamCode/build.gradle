@@ -42,5 +42,7 @@ dependencies {
     // NextFTC
     implementation("dev.nextftc:ftc:1.0.1")
     implementation("dev.nextftc:hardware:1.0.1")
-    implementation 'dev.nextftc.extensions:pedro:1.0.0'
-}
+    implementation('dev.nextftc.extensions:pedro:1.0.0') {
+        exclude group: 'com.pedropathing'  // Prevent version conflict with your 2.0.6
+        }
+    }

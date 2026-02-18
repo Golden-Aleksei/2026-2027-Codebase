@@ -9,7 +9,6 @@ import dev.nextftc.core.commands.conditionals.IfElseCommand
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.extensions.pedro.PedroComponent
-import dev.nextftc.extensions.pedro.PedroDriverControlled
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
@@ -40,7 +39,6 @@ class MainTeleOp: NextFTCOpMode() {
     override fun onUpdate() {
         telemetryM.update()
         telemetry.update()
-        PedroComponent.follower.update()
         BindingManager.update()
         val robot = Robot.Robot // Stop me from going crazy
 

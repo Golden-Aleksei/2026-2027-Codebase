@@ -7,15 +7,15 @@ import dev.nextftc.extensions.pedro.PedroDriverControlled
 import dev.nextftc.ftc.Gamepads
 
 class Drivetrain(var isProgrammer: Boolean): Component {
-    override fun postInit() {
-        PedroComponent.follower.update()
-    }
+    // REMOVED: postInit() — PedroComponent handles the initial follower.update()
+    // The follower may not be initialized yet when postInit runs on this component.
 
     override fun postStartButtonPressed() {
         PedroComponent.follower.startTeleOpDrive()
     }
+
     override fun preUpdate() {
-        PedroComponent.follower.update()
+        // Remove the duplicate follower.update() — PedroComponent handles this
         BindingManager.update()
 
         val slowMultiplier = 0.5
