@@ -14,26 +14,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-/*
-* TODO:
-*  List of steps...
-*  1. Fill in mass
-*  2. Set offset, don't set yaw as it is automatic
-*  3. Check names of motors and pinpoint computer
-*  4. Run localization tuner
-*  5. Run automatic tuners
-*  6. Run manual/PID tuners
-*  7. If time, run the tests
-* */
+
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .forwardZeroPowerAcceleration(-28.495093589825387) // TODO: Run ForwardZeroPowerAccelerationTuner and check
-            .lateralZeroPowerAcceleration(-31.885836425241894) // TODO: Run LateralZeroPowerAccelerationTuner and check
+            .forwardZeroPowerAcceleration(-28.495093589825387)
+            .lateralZeroPowerAcceleration(-31.885836425241894)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.01, 0.021))
             .headingPIDFCoefficients(new PIDFCoefficients(1,0,0.03,0.03))
-            //.drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0.0,0.01,0.6,0.0))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0.0,0.01,0.6,0.0))
             .centripetalScaling(0.0005)
-            .mass(11); // TODO: Change when Robot is finished (in kg)
+            .mass(11);
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
@@ -41,11 +31,19 @@ public class Constants {
             1,
             1);
 
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        return new FollowerBuilder(followerConstants, hardwareMap)
+                .pinpointLocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
+                .mecanumDrivetrain(driveConstants)
+                .build();
+    }
+
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .xVelocity(60.71848182978592) // TODO: Run ForwardVelocityTuner and check
-            .yVelocity(53.26731956662155) // TODO: Run LateralVelocityTuner and check
+            .xVelocity(60.71848182978592)
+            .yVelocity(53.26731956662155)
             .maxPower(1) // For both auto and teleop
-            .rightFrontMotorName("rf") // TODO: Ensure these are named on the control hub
+            .rightFrontMotorName("rf")
             .rightRearMotorName("rr")
             .leftRearMotorName("lr")
             .leftFrontMotorName("lf")
@@ -54,24 +52,12 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
 
-    public static PinpointConstants localizerConstants = new PinpointConstants() // TODO: Test localizer, moving forward increases x and strafing left increases y
-            .forwardPodY(1.5) // TODO: Modify both offsets, consult https://pedropathing.com/docs/pathing/tuning/localization/pinpoint
+    public static PinpointConstants localizerConstants = new PinpointConstants()
+            .forwardPodY(1.5)
             .strafePodX(1)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD) // TODO: Check encoder directions, run localization test in tuning
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
-
-    public static Follower createFollower(HardwareMap hardwareMap) {
-        try {
-            return new FollowerBuilder(followerConstants, hardwareMap)
-                    .pinpointLocalizer(localizerConstants)
-                    .pathConstraints(pathConstraints)
-                    .mecanumDrivetrain(driveConstants)
-                    .build();
-        } catch (Exception e) {
-            throw new RuntimeException("createFollower FAILED: " + e.getMessage(), e);
-        }
-    }
 }
