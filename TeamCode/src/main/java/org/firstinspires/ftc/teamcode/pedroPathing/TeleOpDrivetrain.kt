@@ -16,11 +16,8 @@ import dev.nextftc.ftc.Gamepads
  */
 class TeleOpDrivetrain(val isOneGamepad: Boolean): Component {
 
-    override fun postStartButtonPressed() {
-        PedroComponent.follower.startTeleopDrive()
-    }
-
-    override fun postInit() {
+    override fun preStartButtonPressed() {
+        BindingManager.update()
         val slowMultiplier = 0.5
         var turnMultiplier = 1.0
 
@@ -29,6 +26,7 @@ class TeleOpDrivetrain(val isOneGamepad: Boolean): Component {
             Gamepads.gamepad1.leftStickX,
             { Gamepads.gamepad1.rightStickX.get() * turnMultiplier }
         )
+        driveControlled()
 
         var slowDriveControlled = PedroDriverControlled(
             { Gamepads.gamepad1.leftStickY.get() * slowMultiplier },
@@ -47,5 +45,7 @@ class TeleOpDrivetrain(val isOneGamepad: Boolean): Component {
             Gamepads.gamepad1.leftBumper
                 .whenBecomesTrue { turnMultiplier -= 0.1 }
         }
+
+        PedroComponent.follower.startTeleopDrive()
     }
 }

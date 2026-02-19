@@ -33,17 +33,11 @@ class ProgrammerTeleOp : NextFTCOpMode(){
 
     lateinit var telemetryM: TelemetryManager
 
-    override fun onInit() {
+    override fun onStartButtonPressed() {
+        BindingManager.update()
         telemetryM = PanelsTelemetry.telemetry
-        Gamepads.gamepad1.rightBumper whenTrue robotModes(4) whenBecomesFalse robotModes(1)
+        Gamepads.gamepad1.rightBumper whenTrue RobotModes(4) whenBecomesFalse RobotModes(1)
 
-        Gamepads.gamepad1.leftBumper whenTrue robotModes(9) whenBecomesFalse robotModes(0)
-
-        Gamepads.gamepad1.rightTrigger.atLeast(0.75) whenBecomesTrue robotModes(2)
-
-        Gamepads.gamepad1.y .toggleOnBecomesTrue() whenTrue robotModes(6) whenBecomesFalse robotModes(2)
-
-        Gamepads.gamepad1.a .toggleOnBecomesTrue() whenTrue robotModes(5) whenBecomesFalse robotModes(2)
     }
 
     override fun onUpdate() {
