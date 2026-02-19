@@ -11,7 +11,16 @@ import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.impl.ServoEx
 import dev.nextftc.hardware.positionable.SetPosition
+import kotlin.properties.Delegates
 
+/**
+ * Dual-purpose component for limelight camera
+ *
+ * @param isTeleop Parameter to check if this is for teleop or auto
+ * This cannot be changed when the program is running.
+ *
+ * @author D4LM (Julian) - #18592 Golden Aleksei (2026-2027)
+ */
 class Limelight(val isTeleop: Boolean) : Component {
 
     private lateinit var limelight: Limelight3A
@@ -19,6 +28,7 @@ class Limelight(val isTeleop: Boolean) : Component {
 
     private var headingError = 0.0
     private var robotHeading = 0.0
+    var aprilTagID = 0
 
     override fun preStartButtonPressed() {
         limelight = ActiveOpMode.hardwareMap.get(Limelight3A::class.java, "Limelight")
@@ -34,6 +44,13 @@ class Limelight(val isTeleop: Boolean) : Component {
         if (result.isValid) {
             headingError = result.tx
             robotHeading = result.botpose.orientation.yaw
+
+            if (!isTeleop) {
+                var aprilTags = result.fiducialResults
+                for (aprilTag in aprilTags) {
+                    aprilTagID = aprilTag.fiducialId
+                }
+            }
 
             if (5 >= headingError && headingError >= -5) {
                 SetPosition(limelightLight, 1.0)

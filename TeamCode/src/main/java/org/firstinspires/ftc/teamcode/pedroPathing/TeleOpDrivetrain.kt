@@ -20,7 +20,7 @@ class TeleOpDrivetrain(val isOneGamepad: Boolean): Component {
         PedroComponent.follower.startTeleopDrive()
     }
 
-    override fun preUpdate() {
+    override fun postInit() {
         val slowMultiplier = 0.5
         var turnMultiplier = 1.0
 

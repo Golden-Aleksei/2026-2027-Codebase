@@ -29,26 +29,20 @@ import dev.nextftc.core.commands.groups.ParallelGroup
  *
  * 9: Intake and outtake reverses to kick artifacts out of robot without attempt to score
  * */
-class RobotModes(val modes: Int) : Command() {
-    init {
-        requires(Intake, Outtake)
-    }
 
-    override val isDone: Boolean
-        get() = false
 
-    override fun update() {
-        switchCommand({modes}) {
-            case(0, ParallelGroup(Intake.zero, Outtake.zero).requires( Intake, Outtake))
-            case(1, Intake.zero.requires(Intake))
-            case(2, Outtake.zero.requires(Outtake))
-            case(3, Intake.forward.requires(Intake))
-            case(4, ParallelGroup(Intake.forward, Outtake.reverse).requires(Intake, Outtake))
-            case(5, Outtake.shortVelocityScore.requires(Outtake))
-            case(6, Outtake.longVelocityScore.requires(Outtake))
-            case(7, ParallelGroup(Intake.forward, Outtake.shortVelocityScore).requires(Intake, Outtake))
-            case(8, ParallelGroup(Intake.forward, Outtake.longVelocityScore).requires(Intake, Outtake))
-            case(9, ParallelGroup(Intake.reverse, Outtake.reverse).requires(Intake, Outtake))
-        }
+fun robotModes(mode: Int): Command {
+    return when(mode) {
+        0 -> ParallelGroup(Intake.zero, Outtake.zero).requires(Intake, Outtake)
+        1 -> Intake.zero.requires(Intake)
+        2 -> Outtake.zero.requires(Outtake)
+        3 -> Intake.forward.requires(Intake)
+        4 -> ParallelGroup(Intake.forward, Outtake.reverse).requires(Intake, Outtake)
+        5 -> Outtake.shortVelocityScore.requires(Outtake)
+        6 -> Outtake.longVelocityScore.requires(Outtake)
+        7 -> ParallelGroup(Intake.forward, Outtake.shortVelocityScore).requires(Intake, Outtake)
+        8 -> ParallelGroup(Intake.forward, Outtake.longVelocityScore).requires(Intake, Outtake)
+        9 -> ParallelGroup(Intake.reverse, Outtake.reverse).requires(Intake, Outtake)
+        else -> ParallelGroup(Intake.zero, Outtake.zero).requires(Intake, Outtake) // Default safe case
     }
 }

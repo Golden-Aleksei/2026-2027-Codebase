@@ -10,7 +10,7 @@ import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
 import org.firstinspires.ftc.teamcode.hardware.Limelight
-import org.firstinspires.ftc.teamcode.hardware.RobotModes
+import org.firstinspires.ftc.teamcode.hardware.robotModes
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.pedroPathing.TeleOpDrivetrain
 
@@ -36,15 +36,15 @@ class MainTeleOp : NextFTCOpMode(){
         BindingManager.update()
         telemetryM.update()
 
-        Gamepads.gamepad2.rightBumper whenTrue RobotModes(4) whenBecomesFalse RobotModes(1)
+        Gamepads.gamepad2.rightBumper whenTrue robotModes(4) whenBecomesFalse robotModes(1)
 
-        Gamepads.gamepad2.leftBumper whenTrue RobotModes(9) whenBecomesFalse RobotModes(0)
+        Gamepads.gamepad2.leftBumper whenTrue robotModes(9) whenBecomesFalse robotModes(0)
 
-        Gamepads.gamepad2.rightTrigger.atLeast(0.75) whenBecomesTrue RobotModes(2)
+        Gamepads.gamepad2.rightTrigger.atLeast(0.75) whenBecomesTrue robotModes(2)
 
-        Gamepads.gamepad2.y .toggleOnBecomesTrue() whenTrue RobotModes(6) whenBecomesFalse RobotModes(2)
+        Gamepads.gamepad2.y .toggleOnBecomesTrue() whenTrue robotModes(6) whenBecomesFalse robotModes(2)
 
-        Gamepads.gamepad2.a .toggleOnBecomesTrue() whenTrue RobotModes(5) whenBecomesFalse RobotModes(2)
+        Gamepads.gamepad2.a .toggleOnBecomesTrue() whenTrue robotModes(5) whenBecomesFalse robotModes(2)
     }
 
     override fun onStop() {
