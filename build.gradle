@@ -5,6 +5,10 @@
  */
 
 buildscript {
+
+    // Kotlin Version - Julian
+    ext.kotlin_version = '2.3.10'
+
     repositories {
         mavenCentral()
         google()
@@ -12,6 +16,10 @@ buildscript {
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
         classpath 'com.android.tools.build:gradle:8.7.0'
+
+        // Sets Kotlin Version - Julian
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
     }
 }
 
