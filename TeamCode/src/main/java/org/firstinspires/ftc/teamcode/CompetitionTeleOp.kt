@@ -40,7 +40,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
     private val rightFrontMotor = MotorEx("rf").brakeMode()
     private val leftRearMotor = MotorEx("lr").brakeMode()
     private val rightRearMotor = MotorEx("rr").brakeMode()
-    private val imu = IMUEx("imu", Direction.BACKWARD, Direction.FORWARD).zeroed()
+    private val imu = IMUEx("imu", Direction.UP, Direction.FORWARD).zeroed()
 
     override fun onStartButtonPressed() {
         // You can put commands here
@@ -60,18 +60,19 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
 
         // Slow mode
-        Gamepads.gamepad1.b whenBecomesTrue {
-            driveControlled.scalar = 0.5
-        } whenBecomesFalse {
-            driveControlled.scalar = 1.0
-        }
+        Gamepads.gamepad1.b .toggleOnBecomesTrue()
+            .whenBecomesTrue {
+                driveControlled.scalar = 0.5
+            } whenBecomesFalse {
+                driveControlled.scalar = 1.0
+            }
 
         Gamepads.gamepad2.rightBumper whenBecomesTrue Routines.intake whenBecomesFalse Routines.haltIntake
         Gamepads.gamepad2.leftBumper whenBecomesTrue Routines.reverseIntake whenBecomesFalse Routines.haltIntake
 
         Gamepads.gamepad2.rightTrigger.atLeast(0.75) whenBecomesTrue Routines.haltIntake
 
-        Gamepads.gamepad2.y.toggleOnBecomesTrue() whenBecomesTrue Routines.shoot
+        Gamepads.gamepad2.y.toggleOnBecomesTrue() whenBecomesTrue Routines.shoot whenBecomesFalse Routines.stopShoot
     }
 
     override fun onUpdate() {
@@ -113,8 +114,12 @@ class CompetitionTeleOp : NextFTCOpMode() {
             Shooter.rMotor.state.velocity / Shooter.TICKS_PER_REV * 60
         )
         ActiveOpMode.telemetry.addData(
-            "Target velocity",
-            Shooter.controller.goal.velocity / Shooter.TICKS_PER_REV * 60
+            "Left Motor Target velocity",
+            Shooter.lController.goal.velocity / Shooter.TICKS_PER_REV * 60
+        )
+        ActiveOpMode.telemetry.addData(
+            "Right Motor Target velocity",
+            Shooter.rController.goal.velocity / Shooter.TICKS_PER_REV * 60
         )
         ActiveOpMode.telemetry.addData("Current left power: ", Shooter.lMotor.power)
         ActiveOpMode.telemetry.addData("Current right power: ", Shooter.rMotor.power)
