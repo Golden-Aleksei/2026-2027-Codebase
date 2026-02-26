@@ -6,9 +6,9 @@ import dev.nextftc.hardware.impl.CRServoEx
 import dev.nextftc.hardware.powerable.SetPower
 
 object Intake : Subsystem {
-    val servo1 = CRServoEx("servo1")
-    val servo2 = CRServoEx("servo2")
-    val servo3 = CRServoEx("servo3")
+    val servo1 = CRServoEx("Servo1")
+    val servo2 = CRServoEx("Servo2")
+    val servo3 = CRServoEx("Servo3")
 
     val stop = ParallelGroup(
         SetPower(servo1, 0.0),

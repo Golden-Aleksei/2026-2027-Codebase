@@ -10,7 +10,7 @@ import dev.nextftc.core.commands.delays.WaitUntil
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.hardware.controllable.RunToVelocity
-import org.firstinspires.ftc.teamcode.nextFTC.DecoupledMotorEx
+import dev.nextftc.hardware.impl.MotorEx
 
 @Configurable
 object Shooter : Subsystem {
@@ -18,26 +18,38 @@ object Shooter : Subsystem {
 
     var controlled = true
 
-    val lMotor = DecoupledMotorEx("lOuttake", "lf").reversed()
-    val rMotor = DecoupledMotorEx("rOuttake", "rf").reversed()
+    @JvmField
+    var targetVelocity = 400.0
+
+    val lMotor = MotorEx("LOuttake")
+    val rMotor = MotorEx("ROuttake")
 
     @JvmField
-    var basicFFCoefficients =
-        BasicFeedforwardParameters(0.001, 0.0, 0.0) // Maybe modify these FF values?
+    var LFFCoefficients = BasicFeedforwardParameters(0.0,0.0,0.0)
+    var RFFCoefficeints = BasicFeedforwardParameters(0.0, 0.0, 0.0)
 
     @JvmField
-    var velPIDCoefficients = PIDCoefficients(0.0, 0.0, 0.0) // TODO: Modify these PID values
+    var LVelPIDCoefficeients = PIDCoefficients(0.0,0.0,0.0)
+    var RVelPIDCoefficients= PIDCoefficients(125.0,0.0,0.0)
 
     override fun initialize() {
         lMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         rMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        controller.goal = KineticState()
+        rMotor.reversed()
+        lController.goal = KineticState()
+        rController.goal = KineticState()
     }
 
     @JvmField
-    val controller = controlSystem {
-        velPid(velPIDCoefficients)
-        basicFF(basicFFCoefficients)
+    val lController = controlSystem {
+        velPid(LVelPIDCoefficeients)
+        basicFF(LFFCoefficients)
+    }
+
+    @JvmField
+    val rController = controlSystem {
+        velPid(RVelPIDCoefficients)
+        basicFF(RFFCoefficeints)
     }
 
     var loopCount = 0
@@ -46,7 +58,7 @@ object Shooter : Subsystem {
         if (loopCount >= LOOP_THRESHOLD) {
             true
         } else {
-            if (rMotor.velocity > (controller.goal.velocity - 10) && rMotor.velocity < (controller.goal.velocity + 60)) {
+            if (rMotor.velocity > (rController.goal.velocity - 10) && rMotor.velocity < (rController.goal.velocity + 60)) {
                 loopCount++
             } else {
                 loopCount = 0
@@ -56,28 +68,38 @@ object Shooter : Subsystem {
         }
     }
 
+    @JvmField
     val start = ParallelGroup(
         RunToVelocity(
-            controller,
+            lController,
             (2400 / 60.0) * TICKS_PER_REV,
-            KineticState(Double.POSITIVE_INFINITY, 500.0, Double.POSITIVE_INFINITY)
-        ).requires(this),
+            KineticState(Double.POSITIVE_INFINITY, targetVelocity, Double.POSITIVE_INFINITY)
+        ),
+        RunToVelocity(
+            rController,
+            (2400 / 60.0) * TICKS_PER_REV,
+            KineticState(Double.POSITIVE_INFINITY, targetVelocity, Double.POSITIVE_INFINITY)
+        ),
         checkWithinToleranceForCorrectNumberOfLoops
-    )
+    ).requires(this)
 
-    val stop = RunToVelocity(
-        controller, 0.0, KineticState(
-            Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
-            Double.POSITIVE_INFINITY
+    val stop = ParallelGroup(
+        RunToVelocity(
+            lController, 0.0, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
+        ), RunToVelocity(
+            rController, 0.0, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
         )
     ).requires(this)
 
-    val reverseIntake = RunToVelocity(controller, -((1000 / 60.0) * TICKS_PER_REV)).requires(this)
+    val reverseIntake = ParallelGroup(
+        RunToVelocity(lController, -((20 / 60.0) * TICKS_PER_REV)),
+        RunToVelocity(rController, -((20 / 60.0) * TICKS_PER_REV))
+    ).requires(this)
 
     override fun periodic() {
         if (controlled) {
-            lMotor.power = controller.calculate(lMotor.state)
-            rMotor.power = controller.calculate(rMotor.state)
+            lMotor.power = lController.calculate(lMotor.state)
+            rMotor.power = rController.calculate(rMotor.state)
         }
     }
 }

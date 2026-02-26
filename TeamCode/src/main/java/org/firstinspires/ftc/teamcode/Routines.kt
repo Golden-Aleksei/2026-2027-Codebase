@@ -11,12 +11,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 object Routines {
     val shoot
-        get() = SequentialGroup(
-            Shooter.start.withDeadline(WaitUntil { Shooter.rMotor.velocity > Shooter.controller.goal.velocity }),
-            Intake.forward.endAfter(200.milliseconds),
-            Intake.stop,
-            Shooter.stop
-        )
+        get() = Shooter.start
 
     val stopShoot = InstantCommand(
         SequentialGroup(
@@ -26,7 +21,7 @@ object Routines {
     )
 
     val intake: Command
-        get() = ParallelGroup(Intake.forward, Shooter.reverseIntake).endAfter(200.milliseconds)
+        get() = ParallelGroup(Intake.forward, Shooter.reverseIntake)
 
     val haltIntake = Intake.stop
 

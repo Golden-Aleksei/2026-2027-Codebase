@@ -18,6 +18,7 @@
 
 package org.firstinspires.ftc.teamcode.nextFTC
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import dev.nextftc.ftc.ActiveOpMode
